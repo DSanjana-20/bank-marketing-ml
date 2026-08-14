@@ -3,6 +3,7 @@ import pandas as pd
 import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
+from pathlib import Path
 
 from sklearn.metrics import (
     accuracy_score,
@@ -44,16 +45,19 @@ st.write(
 # LOAD MODELS
 # ============================================================
 
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_DIR = BASE_DIR / "Models"
+
 
 @st.cache_resource
 def load_models():
     models = {}
 
-    models["Logistic Regression"] = joblib.load("logistic_model.pkl")
-    models["Decision Tree"] = joblib.load("decision_tree_model.pkl")
-    models["kNN"] = joblib.load("knn_model.pkl")
-    models["Naive Bayes"] = joblib.load("naive_bayes_model.pkl")
-    models["Random Forest"] = joblib.load("random_forest_model.pkl")
+    models["Logistic Regression"] = joblib.load(MODEL_DIR / "logistic_model.pkl")
+    models["Decision Tree"] = joblib.load(MODEL_DIR / "decision_tree_model.pkl")
+    models["kNN"] = joblib.load(MODEL_DIR / "knn_model.pkl")
+    models["Naive Bayes"] = joblib.load(MODEL_DIR / "naive_bayes_model.pkl")
+    models["Random Forest"] = joblib.load(MODEL_DIR / "random_forest_model.pkl")
 
     return models
 
