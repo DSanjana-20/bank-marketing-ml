@@ -98,7 +98,8 @@ if uploaded_file is not None:
 
     try:
         # Load only when the user explicitly asks for predictions.
-        selected_model = load_model(selected_model_name)
+        with st.spinner(f"Loading {selected_model_name}..."):
+            selected_model = load_model(selected_model_name)
 
         # Read CSV
         test_data = pd.read_csv(uploaded_file)
