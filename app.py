@@ -47,28 +47,18 @@ st.write(
 
 BASE_DIR = Path(__file__).resolve().parent
 MODEL_DIR = BASE_DIR / "Models"
+MODEL_FILES = {
+    "Logistic Regression": MODEL_DIR / "logistic_model.pkl",
+    "Decision Tree": MODEL_DIR / "decision_tree_model.pkl",
+    "kNN": MODEL_DIR / "knn_model.pkl",
+    "Naive Bayes": MODEL_DIR / "naive_bayes_model.pkl",
+    "Random Forest": MODEL_DIR / "random_forest_model.pkl",
+}
 
 
 @st.cache_resource
-def load_models():
-    models = {}
-
-    models["Logistic Regression"] = joblib.load(MODEL_DIR / "logistic_model.pkl")
-    models["Decision Tree"] = joblib.load(MODEL_DIR / "decision_tree_model.pkl")
-    models["kNN"] = joblib.load(MODEL_DIR / "knn_model.pkl")
-    models["Naive Bayes"] = joblib.load(MODEL_DIR / "naive_bayes_model.pkl")
-    models["Random Forest"] = joblib.load(MODEL_DIR / "random_forest_model.pkl")
-
-    return models
-
-
-# Load all models
-try:
-    models = load_models()
-    st.success("All five ML models loaded successfully.")
-except Exception as e:
-    st.error(f"Error loading model files: {e}")
-    st.stop()
+def load_model(model_name: str):
+    return joblib.load(MODEL_FILES[model_name])
 
 
 # ============================================================
@@ -79,16 +69,8 @@ st.sidebar.header("Model Selection")
 
 selected_model_name = st.sidebar.selectbox(
     "Select ML Model",
-    [
-        "Logistic Regression",
-        "Decision Tree",
-        "kNN",
-        "Naive Bayes",
-        "Random Forest",
-    ],
+    list(MODEL_FILES.keys()),
 )
-
-selected_model = models[selected_model_name]
 
 
 # ============================================================
@@ -108,7 +90,16 @@ uploaded_file = st.file_uploader(
 # ============================================================
 
 if uploaded_file is not None:
+    run_prediction = st.button("Generate Predictions", type="primary")
+
+    if not run_prediction:
+        st.info("Upload the file, then click 'Generate Predictions' to load the selected model and run inference.")
+        st.stop()
+
     try:
+        # Load only when the user explicitly asks for predictions.
+        selected_model = load_model(selected_model_name)
+
         # Read CSV
         test_data = pd.read_csv(uploaded_file)
 
@@ -128,7 +119,7 @@ if uploaded_file is not None:
         with col2:
             st.metric("Number of Columns", test_data.shape[1])
 
-        st.dataframe(test_data.head(10), use_container_width=True)
+        st.dataframe(test_data.head(10), width="stretch")
 
         # ====================================================
         # CHECK TARGET COLUMN
@@ -266,7 +257,7 @@ if uploaded_file is not None:
 
         report_df = pd.DataFrame(report).transpose()
 
-        st.dataframe(report_df.round(4), use_container_width=True)
+        st.dataframe(report_df.round(4), width="stretch")
 
         # ====================================================
         # PREDICTION RESULTS
@@ -279,7 +270,7 @@ if uploaded_file is not None:
         prediction_output["Predicted"] = pd.Series(predictions).map({0: "no", 1: "yes"})
         prediction_output["Probability"] = probabilities
 
-        st.dataframe(prediction_output.head(20), use_container_width=True)
+        st.dataframe(prediction_output.head(20), width="stretch")
 
         # ====================================================
         # DOWNLOAD PREDICTIONS
