@@ -8,6 +8,8 @@ The task is to predict whether a client will subscribe to a term deposit based o
 
 The project also provides a Streamlit web application that allows users to upload a test dataset, select a trained model, and view evaluation metrics and prediction results.
 
+The app is designed specifically to load and evaluate only the model selected by the user, so predictions and metrics are generated for one chosen model at a time.
+
 ## b. Dataset Description
 
 This project uses the Bank Marketing dataset, a well-known dataset for binary classification.
@@ -79,4 +81,3 @@ The following machine learning models were trained and evaluated on the dataset:
 ### Overall Winner
 
 **Random Forest (Ensemble)** is the overall winner for this dataset because it gives the best balance of performance metrics and the strongest discrimination ability.
-
